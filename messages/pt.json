@@ -50,5 +50,10 @@
   },
   "explanations": {
     "title": "Explicação dos Campos"
+  },
+  "locationSelect": {
+    "label": "Selecionar Idioma",
+    "english": "English",
+    "portuguese": "Português"
   }
 }

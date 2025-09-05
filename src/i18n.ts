@@ -1,4 +1,3 @@
-import {notFound} from 'next/navigation';
 import {getRequestConfig} from 'next-intl/server';
 
 // Can be imported from a shared config
@@ -6,10 +5,13 @@ const locales = ['en', 'pt'] as const;
 
 export default getRequestConfig(async ({locale}) => {
   // Validate that the incoming `locale` parameter is valid
-  if (!locales.includes(locale as typeof locales[number])) notFound();
-
+  // If invalid, fallback to default locale instead of calling notFound()
+  const validLocale = locales.includes(locale as typeof locales[number]) 
+    ? locale as typeof locales[number]
+    : 'pt'; // Default to Portuguese if locale is invalid
+  console.log(locale)
   return {
-    locale: locale as typeof locales[number],
-    messages: (await import(`../messages/${locale}.json`)).default
+    locale: validLocale,
+    messages: (await import(`../messages/${validLocale}.json`)).default
   };
 });
