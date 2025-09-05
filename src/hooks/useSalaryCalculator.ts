@@ -29,11 +29,14 @@ const DEFAULT_DISTRIBUTION: SalaryDistributionConfig = {
   studies: 0.05,
 };
 
+const MINIMUM_SALARY = 1518; // Brazilian minimum wage
+
 export const useSalaryCalculator = () => {
   const [salary, setSalary] = useState<string>('');
   const [result, setResult] = useState<CalculationResult | null>(null);
   const [distribution, setDistribution] = useState<SalaryDistributionConfig>(DEFAULT_DISTRIBUTION);
   const [editableValues, setEditableValues] = useState<Partial<CalculationResult>>({});
+  const [salaryError, setSalaryError] = useState<string>('');
   const [percentageStrings, setPercentageStrings] = useState<Record<keyof SalaryDistributionConfig, string>>({
     investments: '25',
     fixedCosts: '30',
@@ -101,7 +104,18 @@ export const useSalaryCalculator = () => {
   const calculate = () => {
     const numericSalary = parseSalaryInput(salary);
     
+    // Clear previous error
+    setSalaryError('');
+    
     if (!numericSalary || numericSalary <= 0 || isNaN(numericSalary)) {
+      setResult(null);
+      setEditableValues({});
+      return;
+    }
+
+    // Check minimum salary validation
+    if (numericSalary < MINIMUM_SALARY) {
+      setSalaryError(`O salário deve ser pelo menos R$ ${MINIMUM_SALARY.toLocaleString('pt-BR')},00 (salário mínimo brasileiro)`);
       setResult(null);
       setEditableValues({});
       return;
@@ -223,7 +237,7 @@ export const useSalaryCalculator = () => {
 
   const isValidSalary = (): boolean => {
     const numericSalary = parseSalaryInput(salary);
-    return numericSalary > 0 && !isNaN(numericSalary);
+    return numericSalary >= MINIMUM_SALARY && !isNaN(numericSalary);
   };
 
   return {
@@ -238,6 +252,8 @@ export const useSalaryCalculator = () => {
     editableValues,
     updateFieldValue,
     updateFieldPercentage,
-    percentageStrings
+    percentageStrings,
+    salaryError,
+    minimumSalary: MINIMUM_SALARY
   };
 };

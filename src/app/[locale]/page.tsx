@@ -17,7 +17,9 @@ export default function SalaryCalculator() {
     editableValues,
     updateFieldValue,
     updateFieldPercentage,
-    percentageStrings
+    percentageStrings,
+    salaryError,
+    minimumSalary
   } = useSalaryCalculator();
 
   const parseValueInput = (value: string): number => {
@@ -59,14 +61,34 @@ export default function SalaryCalculator() {
                 value={salary}
                 onChange={(e) => setSalary(e.target.value)}
                 placeholder={t('salaryInput.placeholder')}
-                className="w-full pl-10 pr-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-lg text-gray-900 dark:text-white bg-white dark:bg-gray-700 transition-colors duration-300"
+                className={`w-full pl-10 pr-4 py-3 border rounded-lg focus:ring-2 text-lg bg-white dark:bg-gray-700 transition-colors duration-300 ${
+                  salaryError 
+                    ? 'border-red-500 dark:border-red-500 focus:ring-red-500 focus:border-red-500 text-red-900 dark:text-red-100' 
+                    : 'border-gray-300 dark:border-gray-600 focus:ring-blue-500 focus:border-blue-500 text-gray-900 dark:text-white'
+                }`}
               />
+              {salaryError && (
+                <p className="mt-2 text-sm text-red-600 dark:text-red-400 flex items-center">
+                  <svg className="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                    <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
+                  </svg>
+                  {salaryError}
+                </p>
+              )}
+              <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">
+                Salário mínimo: R$ {minimumSalary.toLocaleString('pt-BR')},00
+              </p>
             </div>
           </div>
 
           <button
             onClick={calculate}
-            className="w-full bg-blue-600 hover:bg-blue-700 dark:bg-blue-700 dark:hover:bg-blue-600 text-white font-semibold py-3 px-6 rounded-lg transition duration-200 ease-in-out transform hover:scale-105"
+            disabled={!salary.trim() || salaryError !== ''}
+            className={`w-full font-semibold py-3 px-6 rounded-lg transition duration-200 ease-in-out transform ${
+              !salary.trim() || salaryError !== ''
+                ? 'bg-gray-400 dark:bg-gray-600 text-gray-200 dark:text-gray-400 cursor-not-allowed'
+                : 'bg-blue-600 hover:bg-blue-700 dark:bg-blue-700 dark:hover:bg-blue-600 text-white hover:scale-105'
+            }`}
           >
             {t('calculate')}
           </button>
