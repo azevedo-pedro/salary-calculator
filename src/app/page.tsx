@@ -1,103 +1,179 @@
-import Image from "next/image";
+'use client';
 
-export default function Home() {
+import { useSalaryCalculator } from '@/hooks/useSalaryCalculator';
+
+export default function SalaryCalculator() {
+  const {
+    salary,
+    setSalary,
+    result,
+    calculate,
+    formatCurrency,
+  } = useSalaryCalculator();
+
   return (
-    <div className="font-sans grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20">
-      <main className="flex flex-col gap-[32px] row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="font-mono list-inside list-decimal text-sm/6 text-center sm:text-left">
-          <li className="mb-2 tracking-[-.01em]">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] font-mono font-semibold px-1 py-0.5 rounded">
-              src/app/page.tsx
-            </code>
-            .
-          </li>
-          <li className="tracking-[-.01em]">
-            Save and see your changes instantly.
-          </li>
-        </ol>
-
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:w-auto"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 w-full sm:w-auto md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 dark:from-gray-900 dark:to-gray-800 py-12 px-4 transition-colors duration-300">
+      <div className="max-w-4xl mx-auto">
+        <div className="text-center mb-8">
+          <h1 className="text-4xl font-bold text-gray-800 dark:text-white mb-2 transition-colors duration-300">
+            Financial Salary Calculator
+          </h1>
+          <p className="text-gray-600 dark:text-gray-300 transition-colors duration-300">
+            Calculate your salary distribution across different categories
+          </p>
         </div>
-      </main>
-      <footer className="row-start-3 flex gap-[24px] flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
+
+        <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-xl p-8 mb-8 transition-colors duration-300">
+          <div className="mb-6">
+            <label htmlFor="salary" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2 transition-colors duration-300">
+              Monthly Salary
+            </label>
+            <div className="relative">
+              <span className="absolute left-3 top-3 text-gray-500 dark:text-gray-400">R$</span>
+              <input
+                id="salary"
+                type="text"
+                value={salary}
+                onChange={(e) => setSalary(e.target.value)}
+                placeholder="Enter your monthly salary"
+                className="w-full pl-10 pr-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-lg text-gray-900 dark:text-white bg-white dark:bg-gray-700 transition-colors duration-300"
+              />
+            </div>
+          </div>
+
+          <button
+            onClick={calculate}
+            className="w-full bg-blue-600 hover:bg-blue-700 dark:bg-blue-700 dark:hover:bg-blue-600 text-white font-semibold py-3 px-6 rounded-lg transition duration-200 ease-in-out transform hover:scale-105"
+          >
+            Calculate Distribution
+          </button>
+        </div>
+
+        {result && (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 border-l-4 border-green-500 transition-colors duration-300">
+              <h3 className="text-lg font-semibold text-gray-800 dark:text-white mb-2">Investments</h3>
+              <p className="text-2xl font-bold text-green-600 dark:text-green-400">{formatCurrency(result.investments)}</p>
+              <p className="text-sm text-gray-500 dark:text-gray-400">25% of salary</p>
+            </div>
+
+            <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 border-l-4 border-red-500 transition-colors duration-300">
+              <h3 className="text-lg font-semibold text-gray-800 dark:text-white mb-2">Fixed Costs</h3>
+              <p className="text-2xl font-bold text-red-600 dark:text-red-400">{formatCurrency(result.fixedCosts)}</p>
+              <p className="text-sm text-gray-500 dark:text-gray-400">30% of salary</p>
+            </div>
+
+            <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 border-l-4 border-purple-500 transition-colors duration-300">
+              <h3 className="text-lg font-semibold text-gray-800 dark:text-white mb-2">Meta</h3>
+              <p className="text-2xl font-bold text-purple-600 dark:text-purple-400">{formatCurrency(result.meta)}</p>
+              <p className="text-sm text-gray-500 dark:text-gray-400">15% of salary</p>
+            </div>
+
+            <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 border-l-4 border-blue-500 transition-colors duration-300">
+              <h3 className="text-lg font-semibold text-gray-800 dark:text-white mb-2">Confy</h3>
+              <p className="text-2xl font-bold text-blue-600 dark:text-blue-400">{formatCurrency(result.confy)}</p>
+              <p className="text-sm text-gray-500 dark:text-gray-400">15% of salary</p>
+            </div>
+
+            <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 border-l-4 border-yellow-500 transition-colors duration-300">
+              <h3 className="text-lg font-semibold text-gray-800 dark:text-white mb-2">Entertainment</h3>
+              <p className="text-2xl font-bold text-yellow-600 dark:text-yellow-400">{formatCurrency(result.entertainment)}</p>
+              <p className="text-sm text-gray-500 dark:text-gray-400">10% of salary</p>
+            </div>
+
+            <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 border-l-4 border-indigo-500 transition-colors duration-300">
+              <h3 className="text-lg font-semibold text-gray-800 dark:text-white mb-2">Studies</h3>
+              <p className="text-2xl font-bold text-indigo-600 dark:text-indigo-400">{formatCurrency(result.studies)}</p>
+              <p className="text-sm text-gray-500 dark:text-gray-400">5% of salary</p>
+            </div>
+
+            <div className="md:col-span-2 lg:col-span-3">
+              <div className="bg-gradient-to-r from-gray-800 to-gray-900 dark:from-gray-700 dark:to-gray-800 rounded-xl shadow-lg p-6 text-white transition-colors duration-300">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="text-center">
+                    <h3 className="text-lg font-semibold mb-2">Total Allocations</h3>
+                    <p className="text-3xl font-bold text-red-400">{formatCurrency(result.totalDeductions)}</p>
+                  </div>
+                  <div className="text-center">
+                    <h3 className="text-lg font-semibold mb-2">Remaining Amount</h3>
+                    <p className="text-3xl font-bold text-green-400">{formatCurrency(result.remainingAmount)}</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+
+        <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-xl p-8 mt-8 transition-colors duration-300">
+          <h2 className="text-2xl font-bold text-gray-800 dark:text-white mb-6">Field Explanations</h2>
+          
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="space-y-4">
+              <div className="border-l-4 border-green-500 pl-4">
+                <h3 className="font-semibold text-green-600 dark:text-green-400">Investments (25%)</h3>
+                <p className="text-sm text-gray-600 dark:text-gray-300">
+                  Money set aside for future growth and financial security.
+                </p>
+                <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                  Examples: Stocks, bonds, mutual funds, retirement savings, emergency fund
+                </p>
+              </div>
+
+              <div className="border-l-4 border-red-500 pl-4">
+                <h3 className="font-semibold text-red-600 dark:text-red-400">Fixed Costs (30%)</h3>
+                <p className="text-sm text-gray-600 dark:text-gray-300">
+                  Essential monthly expenses that remain constant.
+                </p>
+                <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                  Examples: Rent/mortgage, utilities, insurance, phone bill, internet
+                </p>
+              </div>
+
+              <div className="border-l-4 border-purple-500 pl-4">
+                <h3 className="font-semibold text-purple-600 dark:text-purple-400">Meta (15%)</h3>
+                <p className="text-sm text-gray-600 dark:text-gray-300">
+                  Goal-oriented savings for specific future objectives.
+                </p>
+                <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                  Examples: House down payment, car purchase, vacation, wedding
+                </p>
+              </div>
+            </div>
+
+            <div className="space-y-4">
+              <div className="border-l-4 border-blue-500 pl-4">
+                <h3 className="font-semibold text-blue-600 dark:text-blue-400">Confy (15%)</h3>
+                <p className="text-sm text-gray-600 dark:text-gray-300">
+                  Comfort and lifestyle enhancement expenses.
+                </p>
+                <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                  Examples: Quality clothing, home improvements, gadgets, premium services
+                </p>
+              </div>
+
+              <div className="border-l-4 border-yellow-500 pl-4">
+                <h3 className="font-semibold text-yellow-600 dark:text-yellow-400">Entertainment (10%)</h3>
+                <p className="text-sm text-gray-600 dark:text-gray-300">
+                  Fun activities and leisure spending.
+                </p>
+                <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                  Examples: Movies, dining out, concerts, games, hobbies, sports
+                </p>
+              </div>
+
+              <div className="border-l-4 border-indigo-500 pl-4">
+                <h3 className="font-semibold text-indigo-600 dark:text-indigo-400">Studies (5%)</h3>
+                <p className="text-sm text-gray-600 dark:text-gray-300">
+                  Investment in personal and professional development.
+                </p>
+                <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                  Examples: Courses, books, certifications, workshops, conferences
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   );
 }
