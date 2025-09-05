@@ -1,0 +1,54 @@
+{
+  "title": "Calculadora Financeira de Salário",
+  "subtitle": "Calcule a distribuição do seu salário em diferentes categorias",
+  "salaryInput": {
+    "label": "Salário Mensal",
+    "placeholder": "Digite seu salário mensal"
+  },
+  "calculate": "Calcular Distribuição",
+  "categories": {
+    "investments": {
+      "title": "Investimentos",
+      "percentage": "25% do salário",
+      "description": "Dinheiro reservado para crescimento futuro e segurança financeira.",
+      "examples": "Exemplos: Ações, títulos, fundos mútuos, aposentadoria, reserva de emergência"
+    },
+    "fixedCosts": {
+      "title": "Custos Fixos",
+      "percentage": "30% do salário",
+      "description": "Despesas mensais essenciais que permanecem constantes.",
+      "examples": "Exemplos: Aluguel/financiamento, contas básicas, seguros, telefone, internet"
+    },
+    "meta": {
+      "title": "Meta",
+      "percentage": "15% do salário",
+      "description": "Poupança orientada por objetivos para metas futuras específicas.",
+      "examples": "Exemplos: Entrada da casa, compra de carro, viagem, casamento"
+    },
+    "confy": {
+      "title": "Conforto",
+      "percentage": "15% do salário",
+      "description": "Despesas de conforto e melhoria do estilo de vida.",
+      "examples": "Exemplos: Roupas de qualidade, melhorias para casa, gadgets, serviços premium"
+    },
+    "entertainment": {
+      "title": "Entretenimento",
+      "percentage": "10% do salário",
+      "description": "Atividades divertidas e gastos com lazer.",
+      "examples": "Exemplos: Cinema, restaurantes, shows, jogos, hobbies, esportes"
+    },
+    "studies": {
+      "title": "Estudos",
+      "percentage": "5% do salário",
+      "description": "Investimento em desenvolvimento pessoal e profissional.",
+      "examples": "Exemplos: Cursos, livros, certificações, workshops, conferências"
+    }
+  },
+  "summary": {
+    "totalAllocations": "Total das Alocações",
+    "remainingAmount": "Valor Restante"
+  },
+  "explanations": {
+    "title": "Explicação dos Campos"
+  }
+}

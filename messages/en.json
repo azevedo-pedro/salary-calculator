@@ -1,0 +1,54 @@
+{
+  "title": "Financial Salary Calculator",
+  "subtitle": "Calculate your salary distribution across different categories",
+  "salaryInput": {
+    "label": "Monthly Salary",
+    "placeholder": "Enter your monthly salary"
+  },
+  "calculate": "Calculate Distribution",
+  "categories": {
+    "investments": {
+      "title": "Investments",
+      "percentage": "25% of salary",
+      "description": "Money set aside for future growth and financial security.",
+      "examples": "Examples: Stocks, bonds, mutual funds, retirement savings, emergency fund"
+    },
+    "fixedCosts": {
+      "title": "Fixed Costs",
+      "percentage": "30% of salary",
+      "description": "Essential monthly expenses that remain constant.",
+      "examples": "Examples: Rent/mortgage, utilities, insurance, phone bill, internet"
+    },
+    "meta": {
+      "title": "Meta",
+      "percentage": "15% of salary",
+      "description": "Goal-oriented savings for specific future objectives.",
+      "examples": "Examples: House down payment, car purchase, vacation, wedding"
+    },
+    "confy": {
+      "title": "Confy",
+      "percentage": "15% of salary",
+      "description": "Comfort and lifestyle enhancement expenses.",
+      "examples": "Examples: Quality clothing, home improvements, gadgets, premium services"
+    },
+    "entertainment": {
+      "title": "Entertainment",
+      "percentage": "10% of salary",
+      "description": "Fun activities and leisure spending.",
+      "examples": "Examples: Movies, dining out, concerts, games, hobbies, sports"
+    },
+    "studies": {
+      "title": "Studies",
+      "percentage": "5% of salary",
+      "description": "Investment in personal and professional development.",
+      "examples": "Examples: Courses, books, certifications, workshops, conferences"
+    }
+  },
+  "summary": {
+    "totalAllocations": "Total Allocations",
+    "remainingAmount": "Remaining Amount"
+  },
+  "explanations": {
+    "title": "Field Explanations"
+  }
+}
