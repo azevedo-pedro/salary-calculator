@@ -38,14 +38,26 @@ export const useSalaryCalculator = () => {
       return 0;
     }
     
-    // Simple approach: remove all non-digits and parse as integer first
-    const digitsOnly = salaryInput.replace(/\D/g, '');
+    // Handle Brazilian number format (7.855,77) and international format (7,855.77)
+    let cleanInput = salaryInput.trim();
     
-    if (digitsOnly === '') {
-      return 0;
+    // Remove any currency symbols
+    cleanInput = cleanInput.replace(/[R$\s]/g, '');
+    
+    // Check if it's Brazilian format (dots for thousands, comma for decimal)
+    if (cleanInput.includes(',') && cleanInput.lastIndexOf(',') > cleanInput.lastIndexOf('.')) {
+      // Brazilian format: 7.855,77
+      cleanInput = cleanInput.replace(/\./g, '').replace(',', '.');
+    } else if (cleanInput.includes('.') && cleanInput.includes(',') && cleanInput.lastIndexOf('.') > cleanInput.lastIndexOf(',')) {
+      // International format: 7,855.77
+      cleanInput = cleanInput.replace(/,/g, '');
+    } else if (cleanInput.includes(',') && !cleanInput.includes('.')) {
+      // Only comma, assume it's decimal separator: 7855,77
+      cleanInput = cleanInput.replace(',', '.');
     }
+    // If only dots or no separators, assume it's already in correct format
     
-    const parsed = parseInt(digitsOnly, 10);
+    const parsed = parseFloat(cleanInput);
     const result = isNaN(parsed) ? 0 : parsed;
     
     return result;
