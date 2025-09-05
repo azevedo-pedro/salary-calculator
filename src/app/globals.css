@@ -24,3 +24,130 @@ body {
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
 }
+
+/* Custom Range Slider Styles */
+input[type="range"] {
+  -webkit-appearance: none;
+  appearance: none;
+  background: transparent;
+  cursor: pointer;
+}
+
+/* Track styles */
+input[type="range"]::-webkit-slider-track {
+  height: 8px;
+  border-radius: 4px;
+  background: #e5e7eb;
+}
+
+input[type="range"]::-moz-range-track {
+  height: 8px;
+  border-radius: 4px;
+  background: #e5e7eb;
+  border: none;
+}
+
+/* Dark mode track */
+.dark input[type="range"]::-webkit-slider-track {
+  background: #374151;
+}
+
+.dark input[type="range"]::-moz-range-track {
+  background: #374151;
+}
+
+/* Thumb styles */
+input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  height: 20px;
+  width: 20px;
+  border-radius: 50%;
+  background: #ffffff;
+  border: 2px solid #e5e7eb;
+  cursor: pointer;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  transition: all 0.2s ease;
+}
+
+input[type="range"]::-moz-range-thumb {
+  height: 20px;
+  width: 20px;
+  border-radius: 50%;
+  background: #ffffff;
+  border: 2px solid #e5e7eb;
+  cursor: pointer;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  transition: all 0.2s ease;
+  border: none;
+}
+
+/* Color-specific thumb styles */
+.slider-green::-webkit-slider-thumb {
+  border-color: #059669;
+}
+
+.slider-green::-moz-range-thumb {
+  border-color: #059669;
+}
+
+.slider-red::-webkit-slider-thumb {
+  border-color: #dc2626;
+}
+
+.slider-red::-moz-range-thumb {
+  border-color: #dc2626;
+}
+
+.slider-purple::-webkit-slider-thumb {
+  border-color: #9333ea;
+}
+
+.slider-purple::-moz-range-thumb {
+  border-color: #9333ea;
+}
+
+.slider-blue::-webkit-slider-thumb {
+  border-color: #2563eb;
+}
+
+.slider-blue::-moz-range-thumb {
+  border-color: #2563eb;
+}
+
+.slider-yellow::-webkit-slider-thumb {
+  border-color: #d97706;
+}
+
+.slider-yellow::-moz-range-thumb {
+  border-color: #d97706;
+}
+
+.slider-indigo::-webkit-slider-thumb {
+  border-color: #4f46e5;
+}
+
+.slider-indigo::-moz-range-thumb {
+  border-color: #4f46e5;
+}
+
+/* Hover and focus states */
+input[type="range"]:hover::-webkit-slider-thumb {
+  transform: scale(1.1);
+}
+
+input[type="range"]:hover::-moz-range-thumb {
+  transform: scale(1.1);
+}
+
+input[type="range"]:focus {
+  outline: none;
+}
+
+input[type="range"]:focus::-webkit-slider-thumb {
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.3);
+}
+
+input[type="range"]:focus::-moz-range-thumb {
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.3);
+}

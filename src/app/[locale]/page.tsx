@@ -14,7 +14,20 @@ export default function SalaryCalculator() {
     result,
     calculate,
     formatCurrency,
+    editableValues,
+    updateFieldValue,
+    updateFieldPercentage,
+    percentageStrings
   } = useSalaryCalculator();
+
+  const parseValueInput = (value: string): number => {
+    const cleanValue = value.replace(/[^0-9,.-]/g, '');
+    return parseFloat(cleanValue.replace(',', '.')) || 0;
+  };
+
+  const formatValueForInput = (value: number): string => {
+    return value.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+  };
 
   const handleLanguageChange = (newLocale: string) => {
     // Simply navigate to the new locale root since we're on the main page
@@ -60,41 +73,192 @@ export default function SalaryCalculator() {
         </div>
 
         {result && (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="space-y-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 border-l-4 border-green-500 transition-colors duration-300">
-              <h3 className="text-lg font-semibold text-gray-800 dark:text-white mb-2">{t('categories.investments.title')}</h3>
-              <p className="text-2xl font-bold text-green-600 dark:text-green-400">{formatCurrency(result.investments)}</p>
-              <p className="text-sm text-gray-500 dark:text-gray-400">{t('categories.investments.percentage')}</p>
+              <h3 className="text-lg font-semibold text-gray-800 dark:text-white mb-3">{t('categories.investments.title')}</h3>
+              <div className="space-y-3">
+                <div className="space-y-2">
+                  <div className="flex items-center justify-between">
+                    <label className="text-xs text-gray-500 dark:text-gray-400">Percentage</label>
+                    <span className="text-xs font-semibold text-green-600 dark:text-green-400">{percentageStrings.investments}%</span>
+                  </div>
+                  <input
+                    type="range"
+                    min="0"
+                    max="100"
+                    step="0.1"
+                    value={parseFloat(percentageStrings.investments)}
+                    onChange={(e) => updateFieldPercentage('investments', e.target.value)}
+                    className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer dark:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-green-500 slider-green"
+                  />
+                </div>
+                <div className="flex items-center space-x-2">
+                  <label className="text-xs text-gray-500 dark:text-gray-400 w-8">R$</label>
+                  <input
+                    type="text"
+                    value={formatValueForInput(editableValues.investments || 0)}
+                    onChange={(e) => updateFieldValue('investments', parseValueInput(e.target.value))}
+                    className="flex-1 px-2 py-1 text-sm border rounded focus:ring-1 focus:ring-green-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+                  />
+                </div>
+                <p className="text-xl font-bold text-green-600 dark:text-green-400">{formatCurrency(result.investments)}</p>
+              </div>
             </div>
 
             <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 border-l-4 border-red-500 transition-colors duration-300">
-              <h3 className="text-lg font-semibold text-gray-800 dark:text-white mb-2">{t('categories.fixedCosts.title')}</h3>
-              <p className="text-2xl font-bold text-red-600 dark:text-red-400">{formatCurrency(result.fixedCosts)}</p>
-              <p className="text-sm text-gray-500 dark:text-gray-400">{t('categories.fixedCosts.percentage')}</p>
+              <h3 className="text-lg font-semibold text-gray-800 dark:text-white mb-3">{t('categories.fixedCosts.title')}</h3>
+              <div className="space-y-3">
+                <div className="space-y-2">
+                  <div className="flex items-center justify-between">
+                    <label className="text-xs text-gray-500 dark:text-gray-400">Percentage</label>
+                    <span className="text-xs font-semibold text-red-600 dark:text-red-400">{percentageStrings.fixedCosts}%</span>
+                  </div>
+                  <input
+                    type="range"
+                    min="0"
+                    max="100"
+                    step="0.1"
+                    value={parseFloat(percentageStrings.fixedCosts)}
+                    onChange={(e) => updateFieldPercentage('fixedCosts', e.target.value)}
+                    className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer dark:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-red-500 slider-red"
+                  />
+                </div>
+                <div className="flex items-center space-x-2">
+                  <label className="text-xs text-gray-500 dark:text-gray-400 w-8">R$</label>
+                  <input
+                    type="text"
+                    value={formatValueForInput(editableValues.fixedCosts || 0)}
+                    onChange={(e) => updateFieldValue('fixedCosts', parseValueInput(e.target.value))}
+                    className="flex-1 px-2 py-1 text-sm border rounded focus:ring-1 focus:ring-red-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+                  />
+                </div>
+                <p className="text-xl font-bold text-red-600 dark:text-red-400">{formatCurrency(result.fixedCosts)}</p>
+              </div>
             </div>
 
             <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 border-l-4 border-purple-500 transition-colors duration-300">
-              <h3 className="text-lg font-semibold text-gray-800 dark:text-white mb-2">{t('categories.meta.title')}</h3>
-              <p className="text-2xl font-bold text-purple-600 dark:text-purple-400">{formatCurrency(result.meta)}</p>
-              <p className="text-sm text-gray-500 dark:text-gray-400">{t('categories.meta.percentage')}</p>
+              <h3 className="text-lg font-semibold text-gray-800 dark:text-white mb-3">{t('categories.meta.title')}</h3>
+              <div className="space-y-3">
+                <div className="space-y-2">
+                  <div className="flex items-center justify-between">
+                    <label className="text-xs text-gray-500 dark:text-gray-400">Percentage</label>
+                    <span className="text-xs font-semibold text-purple-600 dark:text-purple-400">{percentageStrings.meta}%</span>
+                  </div>
+                  <input
+                    type="range"
+                    min="0"
+                    max="100"
+                    step="0.1"
+                    value={parseFloat(percentageStrings.meta)}
+                    onChange={(e) => updateFieldPercentage('meta', e.target.value)}
+                    className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer dark:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-purple-500 slider-purple"
+                  />
+                </div>
+                <div className="flex items-center space-x-2">
+                  <label className="text-xs text-gray-500 dark:text-gray-400 w-8">R$</label>
+                  <input
+                    type="text"
+                    value={formatValueForInput(editableValues.meta || 0)}
+                    onChange={(e) => updateFieldValue('meta', parseValueInput(e.target.value))}
+                    className="flex-1 px-2 py-1 text-sm border rounded focus:ring-1 focus:ring-purple-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+                  />
+                </div>
+                <p className="text-xl font-bold text-purple-600 dark:text-purple-400">{formatCurrency(result.meta)}</p>
+              </div>
             </div>
 
             <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 border-l-4 border-blue-500 transition-colors duration-300">
-              <h3 className="text-lg font-semibold text-gray-800 dark:text-white mb-2">{t('categories.confy.title')}</h3>
-              <p className="text-2xl font-bold text-blue-600 dark:text-blue-400">{formatCurrency(result.confy)}</p>
-              <p className="text-sm text-gray-500 dark:text-gray-400">{t('categories.confy.percentage')}</p>
+              <h3 className="text-lg font-semibold text-gray-800 dark:text-white mb-3">{t('categories.confy.title')}</h3>
+              <div className="space-y-3">
+                <div className="space-y-2">
+                  <div className="flex items-center justify-between">
+                    <label className="text-xs text-gray-500 dark:text-gray-400">Percentage</label>
+                    <span className="text-xs font-semibold text-blue-600 dark:text-blue-400">{percentageStrings.confy}%</span>
+                  </div>
+                  <input
+                    type="range"
+                    min="0"
+                    max="100"
+                    step="0.1"
+                    value={parseFloat(percentageStrings.confy)}
+                    onChange={(e) => updateFieldPercentage('confy', e.target.value)}
+                    className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer dark:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 slider-blue"
+                  />
+                </div>
+                <div className="flex items-center space-x-2">
+                  <label className="text-xs text-gray-500 dark:text-gray-400 w-8">R$</label>
+                  <input
+                    type="text"
+                    value={formatValueForInput(editableValues.confy || 0)}
+                    onChange={(e) => updateFieldValue('confy', parseValueInput(e.target.value))}
+                    className="flex-1 px-2 py-1 text-sm border rounded focus:ring-1 focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+                  />
+                </div>
+                <p className="text-xl font-bold text-blue-600 dark:text-blue-400">{formatCurrency(result.confy)}</p>
+              </div>
             </div>
 
             <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 border-l-4 border-yellow-500 transition-colors duration-300">
-              <h3 className="text-lg font-semibold text-gray-800 dark:text-white mb-2">{t('categories.entertainment.title')}</h3>
-              <p className="text-2xl font-bold text-yellow-600 dark:text-yellow-400">{formatCurrency(result.entertainment)}</p>
-              <p className="text-sm text-gray-500 dark:text-gray-400">{t('categories.entertainment.percentage')}</p>
+              <h3 className="text-lg font-semibold text-gray-800 dark:text-white mb-3">{t('categories.entertainment.title')}</h3>
+              <div className="space-y-3">
+                <div className="space-y-2">
+                  <div className="flex items-center justify-between">
+                    <label className="text-xs text-gray-500 dark:text-gray-400">Percentage</label>
+                    <span className="text-xs font-semibold text-yellow-600 dark:text-yellow-400">{percentageStrings.entertainment}%</span>
+                  </div>
+                  <input
+                    type="range"
+                    min="0"
+                    max="100"
+                    step="0.1"
+                    value={parseFloat(percentageStrings.entertainment)}
+                    onChange={(e) => updateFieldPercentage('entertainment', e.target.value)}
+                    className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer dark:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-yellow-500 slider-yellow"
+                  />
+                </div>
+                <div className="flex items-center space-x-2">
+                  <label className="text-xs text-gray-500 dark:text-gray-400 w-8">R$</label>
+                  <input
+                    type="text"
+                    value={formatValueForInput(editableValues.entertainment || 0)}
+                    onChange={(e) => updateFieldValue('entertainment', parseValueInput(e.target.value))}
+                    className="flex-1 px-2 py-1 text-sm border rounded focus:ring-1 focus:ring-yellow-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+                  />
+                </div>
+                <p className="text-xl font-bold text-yellow-600 dark:text-yellow-400">{formatCurrency(result.entertainment)}</p>
+              </div>
             </div>
 
             <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 border-l-4 border-indigo-500 transition-colors duration-300">
-              <h3 className="text-lg font-semibold text-gray-800 dark:text-white mb-2">{t('categories.studies.title')}</h3>
-              <p className="text-2xl font-bold text-indigo-600 dark:text-indigo-400">{formatCurrency(result.studies)}</p>
-              <p className="text-sm text-gray-500 dark:text-gray-400">{t('categories.studies.percentage')}</p>
+              <h3 className="text-lg font-semibold text-gray-800 dark:text-white mb-3">{t('categories.studies.title')}</h3>
+              <div className="space-y-3">
+                <div className="space-y-2">
+                  <div className="flex items-center justify-between">
+                    <label className="text-xs text-gray-500 dark:text-gray-400">Percentage</label>
+                    <span className="text-xs font-semibold text-indigo-600 dark:text-indigo-400">{percentageStrings.studies}%</span>
+                  </div>
+                  <input
+                    type="range"
+                    min="0"
+                    max="100"
+                    step="0.1"
+                    value={parseFloat(percentageStrings.studies)}
+                    onChange={(e) => updateFieldPercentage('studies', e.target.value)}
+                    className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer dark:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 slider-indigo"
+                  />
+                </div>
+                <div className="flex items-center space-x-2">
+                  <label className="text-xs text-gray-500 dark:text-gray-400 w-8">R$</label>
+                  <input
+                    type="text"
+                    value={formatValueForInput(editableValues.studies || 0)}
+                    onChange={(e) => updateFieldValue('studies', parseValueInput(e.target.value))}
+                    className="flex-1 px-2 py-1 text-sm border rounded focus:ring-1 focus:ring-indigo-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+                  />
+                </div>
+                <p className="text-xl font-bold text-indigo-600 dark:text-indigo-400">{formatCurrency(result.studies)}</p>
+              </div>
             </div>
 
             <div className="md:col-span-2 lg:col-span-3">
@@ -110,6 +274,7 @@ export default function SalaryCalculator() {
                   </div>
                 </div>
               </div>
+            </div>
             </div>
           </div>
         )}
