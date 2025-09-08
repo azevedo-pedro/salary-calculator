@@ -30,6 +30,41 @@ const nextConfig: NextConfig = {
   },
   compress: true,
   poweredByHeader: false,
+  // Bundle optimization
+  experimental: {
+    // optimizeCss: true, // Disabled due to critters dependency issue
+  },
+  // Tree shaking and optimization
+  webpack: (config, { dev, isServer }) => {
+    if (!dev) {
+      // Enable tree shaking
+      config.optimization = {
+        ...config.optimization,
+        usedExports: true,
+        sideEffects: false,
+      };
+      
+      // Bundle analysis in production
+      if (process.env.ANALYZE === 'true') {
+        const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer');
+        config.plugins.push(
+          new BundleAnalyzerPlugin({
+            analyzerMode: 'static',
+            openAnalyzer: false,
+          })
+        );
+      }
+    }
+    
+    return config;
+  },
+  // Performance budgets
+  onDemandEntries: {
+    // Period (in ms) where the server will keep pages in the buffer
+    maxInactiveAge: 25 * 1000,
+    // Number of pages that should be kept simultaneously without being disposed
+    pagesBufferLength: 2,
+  },
 };
 
 export default withNextIntl(nextConfig);

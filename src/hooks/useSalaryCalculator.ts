@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useMemo, useCallback } from 'react';
 
 export interface CalculationResult {
   investments: number;
@@ -46,7 +46,8 @@ export const useSalaryCalculator = () => {
     studies: '5'
   });
 
-  const parseSalaryInput = (salaryInput: string): number => {
+
+  const parseSalaryInput = useCallback((salaryInput: string): number => {
     if (!salaryInput || salaryInput.trim() === '') {
       return 0;
     }
@@ -74,9 +75,9 @@ export const useSalaryCalculator = () => {
     const result = isNaN(parsed) ? 0 : parsed;
     
     return result;
-  };
+  }, []);
 
-  const calculateSalaryDistribution = (
+  const calculateSalaryDistribution = useCallback((
     numericSalary: number,
     config: SalaryDistributionConfig = DEFAULT_DISTRIBUTION
   ): CalculationResult => {
@@ -99,9 +100,10 @@ export const useSalaryCalculator = () => {
       totalDeductions,
       remainingAmount
     };
-  };
+  }, []);
 
-  const calculate = () => {
+  const calculate = useCallback(() => {
+    performance.mark('calculation-start');
     const numericSalary = parseSalaryInput(salary);
     
     // Clear previous error
@@ -110,6 +112,7 @@ export const useSalaryCalculator = () => {
     if (!numericSalary || numericSalary <= 0 || isNaN(numericSalary)) {
       setResult(null);
       setEditableValues({});
+      performance.mark('calculation-end');
       return;
     }
 
@@ -118,6 +121,7 @@ export const useSalaryCalculator = () => {
       setSalaryError(`O salário deve ser pelo menos R$ ${MINIMUM_SALARY.toLocaleString('pt-BR')},00 (salário mínimo brasileiro)`);
       setResult(null);
       setEditableValues({});
+      performance.mark('calculation-end');
       return;
     }
 
@@ -132,9 +136,13 @@ export const useSalaryCalculator = () => {
       newPercentageStrings[field] = (distribution[field] * 100).toFixed(1);
     });
     setPercentageStrings(newPercentageStrings);
-  };
+    
+    performance.mark('calculation-end');
+    performance.measure('salary-calculation', 'calculation-start', 'calculation-end');
+  }, [salary, distribution, percentageStrings, parseSalaryInput, calculateSalaryDistribution]);
 
-  const updateFieldValue = (field: keyof CalculationResult, value: number) => {
+  const updateFieldValue = useCallback((field: keyof CalculationResult, value: number) => {
+    performance.mark('field-update-start');
     const numericSalary = parseSalaryInput(salary);
     if (!numericSalary || numericSalary <= 0) return;
 
@@ -185,9 +193,13 @@ export const useSalaryCalculator = () => {
     setDistribution(newDistribution);
     setPercentageStrings(newPercentageStrings);
     setResult(updatedResult);
-  };
+    
+    performance.mark('field-update-end');
+    performance.measure('field-update', 'field-update-start', 'field-update-end');
+  }, [salary, editableValues, distribution, percentageStrings, parseSalaryInput]);
 
-  const updateFieldPercentage = (field: keyof SalaryDistributionConfig, percentageString: string) => {
+  const updateFieldPercentage = useCallback((field: keyof SalaryDistributionConfig, percentageString: string) => {
+    performance.mark('percentage-update-start');
     const percentage = parseFloat(percentageString) || 0;
     const newPercentageStrings = { ...percentageStrings, [field]: percentageString };
     
@@ -223,9 +235,12 @@ export const useSalaryCalculator = () => {
     
     setDistribution(newDistribution);
     setPercentageStrings(newPercentageStrings);
-  };
+    
+    performance.mark('percentage-update-end');
+    performance.measure('percentage-update', 'percentage-update-start', 'percentage-update-end');
+  }, [percentageStrings, distribution, salary, parseSalaryInput, calculateSalaryDistribution]);
 
-  const formatCurrency = (amount: number): string => {
+  const formatCurrency = useCallback((amount: number): string => {
     if (isNaN(amount) || !isFinite(amount)) {
       return 'R$ 0,00';
     }
@@ -233,12 +248,25 @@ export const useSalaryCalculator = () => {
       style: 'currency',
       currency: 'BRL'
     }).format(amount);
-  };
+  }, []);
 
-  const isValidSalary = (): boolean => {
+  const isValidSalary = useCallback((): boolean => {
     const numericSalary = parseSalaryInput(salary);
     return numericSalary >= MINIMUM_SALARY && !isNaN(numericSalary);
-  };
+  }, [salary, parseSalaryInput]);
+
+  // Memoized numeric salary to avoid reparsing
+  const numericSalary = useMemo(() => {
+    return parseSalaryInput(salary);
+  }, [salary, parseSalaryInput]);
+
+  // Memoized calculation result
+  const memoizedResult = useMemo(() => {
+    if (!numericSalary || numericSalary <= 0 || numericSalary < MINIMUM_SALARY) {
+      return null;
+    }
+    return calculateSalaryDistribution(numericSalary, distribution);
+  }, [numericSalary, distribution, calculateSalaryDistribution]);
 
   return {
     salary,
@@ -254,6 +282,9 @@ export const useSalaryCalculator = () => {
     updateFieldPercentage,
     percentageStrings,
     salaryError,
-    minimumSalary: MINIMUM_SALARY
+    minimumSalary: MINIMUM_SALARY,
+    // Expose memoized values for performance monitoring
+    numericSalary,
+    memoizedResult
   };
 };

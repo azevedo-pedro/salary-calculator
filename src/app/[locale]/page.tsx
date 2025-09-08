@@ -4,9 +4,9 @@ import { useSalaryCalculator } from '@/hooks/useSalaryCalculator';
 import { useTranslations, useLocale } from 'next-intl';
 import { useRouter } from 'next/navigation';
 import Script from 'next/script';
-import { useEffect } from 'react';
+import React, { useEffect } from 'react';
 
-export default function SalaryCalculator() {
+const SalaryCalculator = React.memo(() => {
   const locale = useLocale();
   const t = useTranslations();
   const router = useRouter();
@@ -732,4 +732,8 @@ export default function SalaryCalculator() {
       </div>
     </div>
   );
-}
+});
+
+SalaryCalculator.displayName = 'SalaryCalculator';
+
+export default SalaryCalculator;
