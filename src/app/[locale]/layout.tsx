@@ -42,6 +42,9 @@ export async function generateMetadata({
   const currentLang = isPortuguese ? 'pt' : 'en';
   const data = seoData[currentLang];
 
+  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'https://calculator.azevedodev';
+  const canonicalUrl = `${baseUrl}/${locale}`;
+
   return {
     title: data.title,
     description: data.description,
@@ -61,23 +64,40 @@ export async function generateMetadata({
       type: 'website',
       title: data.openGraph.title,
       description: data.openGraph.description,
+      url: canonicalUrl,
       locale: data.openGraph.locale,
       alternateLocale: data.openGraph.alternateLocale,
       siteName: currentLang === 'pt' ? 'Calculadora de Salário' : 'Salary Calculator',
+      images: [
+        {
+          url: `${baseUrl}/og-image.png`,
+          width: 1200,
+          height: 630,
+          alt: data.openGraph.title,
+        }
+      ],
     },
     twitter: {
       card: 'summary_large_image',
       title: data.openGraph.title,
       description: data.openGraph.description,
+      images: [`${baseUrl}/og-image.png`],
+      site: '@salary_calc',
+      creator: '@salary_calc',
     },
     alternates: {
+      canonical: canonicalUrl,
       languages: {
-        'pt-BR': '/pt',
-        'en-US': '/en',
+        'pt-BR': `${baseUrl}/pt`,
+        'en-US': `${baseUrl}/en`,
       },
     },
     other: {
-      'theme-color': '#3B82F6',
+      'theme-color': '#1e66f5',
+      'msapplication-TileColor': '#1e66f5',
+      'apple-mobile-web-app-capable': 'yes',
+      'apple-mobile-web-app-status-bar-style': 'default',
+      'format-detection': 'telephone=no',
     },
   };
 }

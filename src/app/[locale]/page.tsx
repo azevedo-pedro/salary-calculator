@@ -46,39 +46,112 @@ export default function SalaryCalculator() {
   // Generate structured data for SEO
   const generateStructuredData = () => {
     const isPortuguese = locale === 'pt';
+    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'https://calculator.azevedodev';
+    const currentUrl = `${baseUrl}/${locale}`;
     
-    return {
+    const webApplicationSchema = {
       "@context": "https://schema.org",
       "@type": "WebApplication",
+      "@id": currentUrl,
       "name": isPortuguese ? "Calculadora de Salário" : "Salary Calculator",
+      "alternateName": isPortuguese ? "SalaryCalc" : "Calculadora Salarial",
       "description": isPortuguese 
-        ? "Calculadora financeira gratuita para distribuir seu salário em categorias como investimentos, gastos fixos e lazer."
-        : "Free financial calculator to distribute your salary across categories like investments, fixed costs, and entertainment.",
-      "url": `${typeof window !== 'undefined' ? window.location.origin : ''}/${locale}`,
+        ? "Calculadora financeira gratuita para distribuir seu salário em categorias como investimentos, gastos fixos e lazer. Planeje suas finanças pessoais de forma eficiente."
+        : "Free financial calculator to distribute your salary across categories like investments, fixed costs, and entertainment. Plan your personal finances efficiently.",
+      "url": currentUrl,
       "applicationCategory": "FinanceApplication",
       "operatingSystem": "Web Browser",
+      "browserRequirements": "Requires JavaScript. Requires HTML5.",
       "offers": {
         "@type": "Offer",
         "price": "0",
-        "priceCurrency": "USD"
+        "priceCurrency": "USD",
+        "availability": "https://schema.org/InStock"
       },
       "featureList": [
         isPortuguese ? "Distribuição inteligente de salário" : "Smart salary distribution",
         isPortuguese ? "Planejamento financeiro pessoal" : "Personal financial planning",
         isPortuguese ? "Cálculo automático por categorias" : "Automatic calculation by categories",
         isPortuguese ? "Interface responsiva" : "Responsive interface",
-        isPortuguese ? "Suporte a múltiplos idiomas" : "Multi-language support"
+        isPortuguese ? "Suporte a múltiplos idiomas" : "Multi-language support",
+        isPortuguese ? "Ferramentas de gestão financeira" : "Financial management tools"
       ],
       "inLanguage": isPortuguese ? "pt-BR" : "en-US",
+      "audience": {
+        "@type": "Audience",
+        "audienceType": isPortuguese ? "trabalhadores, profissionais, estudantes" : "workers, professionals, students"
+      },
       "author": {
         "@type": "Organization",
-        "name": isPortuguese ? "Calculadora de Salário" : "Salary Calculator"
+        "name": isPortuguese ? "Calculadora de Salário" : "Salary Calculator",
+        "url": baseUrl
       },
       "publisher": {
         "@type": "Organization", 
-        "name": isPortuguese ? "Calculadora de Salário" : "Salary Calculator"
+        "name": isPortuguese ? "Calculadora de Salário" : "Salary Calculator",
+        "url": baseUrl
+      },
+      "sameAs": [
+        `${baseUrl}/pt`,
+        `${baseUrl}/en`
+      ],
+      "potentialAction": {
+        "@type": "UseAction",
+        "target": currentUrl,
+        "object": {
+          "@type": "WebApplication",
+          "name": isPortuguese ? "Calculadora de Salário" : "Salary Calculator"
+        }
       }
     };
+
+    const breadcrumbSchema = {
+      "@context": "https://schema.org",
+      "@type": "BreadcrumbList",
+      "itemListElement": [
+        {
+          "@type": "ListItem",
+          "position": 1,
+          "name": isPortuguese ? "Início" : "Home",
+          "item": currentUrl
+        },
+        {
+          "@type": "ListItem",
+          "position": 2,
+          "name": isPortuguese ? "Calculadora de Salário" : "Salary Calculator",
+          "item": currentUrl
+        }
+      ]
+    };
+
+    const faqSchema = {
+      "@context": "https://schema.org",
+      "@type": "FAQPage",
+      "mainEntity": [
+        {
+          "@type": "Question",
+          "name": isPortuguese ? "Como usar a calculadora de salário?" : "How to use the salary calculator?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": isPortuguese 
+              ? "Digite seu salário líquido mensal e a ferramenta calculará automaticamente quanto você deve alocar para cada categoria: investimentos, gastos fixos, metas, conforto, entretenimento e estudos."
+              : "Enter your monthly net salary and the tool will automatically calculate how much you should allocate to each category: investments, fixed costs, goals, comfort, entertainment, and studies."
+          }
+        },
+        {
+          "@type": "Question", 
+          "name": isPortuguese ? "Qual é a distribuição recomendada?" : "What is the recommended distribution?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": isPortuguese
+              ? "Recomendamos: 25% para investimentos, 30% para gastos fixos, 15% para metas, 15% para conforto, 10% para entretenimento e 5% para estudos."
+              : "We recommend: 25% for investments, 30% for fixed costs, 15% for goals, 15% for comfort, 10% for entertainment, and 5% for studies."
+          }
+        }
+      ]
+    };
+
+    return [webApplicationSchema, breadcrumbSchema, faqSchema];
   };
 
   return (
@@ -207,6 +280,271 @@ export default function SalaryCalculator() {
                        aria-live="polite"
                        role="status">
                       Total: {formatCurrency(result.investments)}
+                    </p>
+                  </section>
+                </article>
+
+                {/* Fixed Costs Category */}
+                <article className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 border-l-4 border-red-500 transition-colors duration-300"
+                         aria-labelledby="fixedcosts-title"
+                         aria-describedby="fixedcosts-description">
+                  <h4 id="fixedcosts-title" className="text-lg font-semibold text-gray-800 dark:text-white mb-3">
+                    {locale === 'pt' ? 'Gastos Fixos' : 'Fixed Costs'}
+                  </h4>
+                  
+                  <section className="space-y-3" role="group" aria-labelledby="fixedcosts-controls-label">
+                    <h5 id="fixedcosts-controls-label" className="sr-only">Controles de Gastos Fixos</h5>
+                    <div className="space-y-2">
+                      <div className="flex items-center justify-between">
+                        <label htmlFor="fixedcosts-percentage-slider" className="text-xs text-gray-500 dark:text-gray-400">Percentage</label>
+                        <span className="text-xs font-semibold text-red-600 dark:text-red-400" 
+                              id="fixedcosts-percentage-display"
+                              aria-live="polite">
+                          {percentageStrings.fixedCosts}%
+                        </span>
+                      </div>
+                      <input
+                        id="fixedcosts-percentage-slider"
+                        type="range"
+                        min="0"
+                        max="100"
+                        step="0.1"
+                        value={parseFloat(percentageStrings.fixedCosts)}
+                        onChange={(e) => updateFieldPercentage('fixedCosts', e.target.value)}
+                        aria-describedby="fixedcosts-percentage-display fixedcosts-description"
+                        aria-label={`Fixed Costs percentage: ${percentageStrings.fixedCosts}%`}
+                        className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer dark:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-red-500 slider-red"
+                      />
+                    </div>
+                    <div className="flex items-center space-x-2">
+                      <label htmlFor="fixedcosts-amount-input" className="text-xs text-gray-500 dark:text-gray-400 w-8">R$</label>
+                      <input
+                        id="fixedcosts-amount-input"
+                        type="text"
+                        value={formatValueForInput(editableValues.fixedCosts || 0)}
+                        onChange={(e) => updateFieldValue('fixedCosts', parseValueInput(e.target.value))}
+                        aria-describedby="fixedcosts-description"
+                        aria-label="Fixed Costs valor em reais"
+                        className="flex-1 px-2 py-1 text-sm border rounded focus:ring-1 focus:ring-red-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+                      />
+                    </div>
+                    <p id="fixedcosts-description" 
+                       className="text-xl font-bold text-red-600 dark:text-red-400"
+                       aria-live="polite"
+                       role="status">
+                      Total: {formatCurrency(result.fixedCosts)}
+                    </p>
+                  </section>
+                </article>
+
+                {/* Goals Category */}
+                <article className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 border-l-4 border-purple-500 transition-colors duration-300"
+                         aria-labelledby="goals-title"
+                         aria-describedby="goals-description">
+                  <h4 id="goals-title" className="text-lg font-semibold text-gray-800 dark:text-white mb-3">
+                    {locale === 'pt' ? 'Metas' : 'Goals'}
+                  </h4>
+                  
+                  <section className="space-y-3" role="group" aria-labelledby="goals-controls-label">
+                    <h5 id="goals-controls-label" className="sr-only">Controles de Metas</h5>
+                    <div className="space-y-2">
+                      <div className="flex items-center justify-between">
+                        <label htmlFor="goals-percentage-slider" className="text-xs text-gray-500 dark:text-gray-400">Percentage</label>
+                        <span className="text-xs font-semibold text-purple-600 dark:text-purple-400" 
+                              id="goals-percentage-display"
+                              aria-live="polite">
+                          {percentageStrings.meta}%
+                        </span>
+                      </div>
+                      <input
+                        id="goals-percentage-slider"
+                        type="range"
+                        min="0"
+                        max="100"
+                        step="0.1"
+                        value={parseFloat(percentageStrings.meta)}
+                        onChange={(e) => updateFieldPercentage('meta', e.target.value)}
+                        aria-describedby="goals-percentage-display goals-description"
+                        aria-label={`Goals percentage: ${percentageStrings.meta}%`}
+                        className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer dark:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-purple-500 slider-purple"
+                      />
+                    </div>
+                    <div className="flex items-center space-x-2">
+                      <label htmlFor="goals-amount-input" className="text-xs text-gray-500 dark:text-gray-400 w-8">R$</label>
+                      <input
+                        id="goals-amount-input"
+                        type="text"
+                        value={formatValueForInput(editableValues.meta || 0)}
+                        onChange={(e) => updateFieldValue('meta', parseValueInput(e.target.value))}
+                        aria-describedby="goals-description"
+                        aria-label="Goals valor em reais"
+                        className="flex-1 px-2 py-1 text-sm border rounded focus:ring-1 focus:ring-purple-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+                      />
+                    </div>
+                    <p id="goals-description" 
+                       className="text-xl font-bold text-purple-600 dark:text-purple-400"
+                       aria-live="polite"
+                       role="status">
+                      Total: {formatCurrency(result.meta)}
+                    </p>
+                  </section>
+                </article>
+
+                {/* Comfort Category */}
+                <article className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 border-l-4 border-blue-500 transition-colors duration-300"
+                         aria-labelledby="comfort-title"
+                         aria-describedby="comfort-description">
+                  <h4 id="comfort-title" className="text-lg font-semibold text-gray-800 dark:text-white mb-3">
+                    {locale === 'pt' ? 'Conforto' : 'Comfort'}
+                  </h4>
+                  
+                  <section className="space-y-3" role="group" aria-labelledby="comfort-controls-label">
+                    <h5 id="comfort-controls-label" className="sr-only">Controles de Conforto</h5>
+                    <div className="space-y-2">
+                      <div className="flex items-center justify-between">
+                        <label htmlFor="comfort-percentage-slider" className="text-xs text-gray-500 dark:text-gray-400">Percentage</label>
+                        <span className="text-xs font-semibold text-blue-600 dark:text-blue-400" 
+                              id="comfort-percentage-display"
+                              aria-live="polite">
+                          {percentageStrings.confy}%
+                        </span>
+                      </div>
+                      <input
+                        id="comfort-percentage-slider"
+                        type="range"
+                        min="0"
+                        max="100"
+                        step="0.1"
+                        value={parseFloat(percentageStrings.confy)}
+                        onChange={(e) => updateFieldPercentage('confy', e.target.value)}
+                        aria-describedby="comfort-percentage-display comfort-description"
+                        aria-label={`Comfort percentage: ${percentageStrings.confy}%`}
+                        className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer dark:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 slider-blue"
+                      />
+                    </div>
+                    <div className="flex items-center space-x-2">
+                      <label htmlFor="comfort-amount-input" className="text-xs text-gray-500 dark:text-gray-400 w-8">R$</label>
+                      <input
+                        id="comfort-amount-input"
+                        type="text"
+                        value={formatValueForInput(editableValues.confy || 0)}
+                        onChange={(e) => updateFieldValue('confy', parseValueInput(e.target.value))}
+                        aria-describedby="comfort-description"
+                        aria-label="Comfort valor em reais"
+                        className="flex-1 px-2 py-1 text-sm border rounded focus:ring-1 focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+                      />
+                    </div>
+                    <p id="comfort-description" 
+                       className="text-xl font-bold text-blue-600 dark:text-blue-400"
+                       aria-live="polite"
+                       role="status">
+                      Total: {formatCurrency(result.confy)}
+                    </p>
+                  </section>
+                </article>
+
+                {/* Entertainment Category */}
+                <article className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 border-l-4 border-yellow-500 transition-colors duration-300"
+                         aria-labelledby="entertainment-title"
+                         aria-describedby="entertainment-description">
+                  <h4 id="entertainment-title" className="text-lg font-semibold text-gray-800 dark:text-white mb-3">
+                    {locale === 'pt' ? 'Entretenimento' : 'Entertainment'}
+                  </h4>
+                  
+                  <section className="space-y-3" role="group" aria-labelledby="entertainment-controls-label">
+                    <h5 id="entertainment-controls-label" className="sr-only">Controles de Entretenimento</h5>
+                    <div className="space-y-2">
+                      <div className="flex items-center justify-between">
+                        <label htmlFor="entertainment-percentage-slider" className="text-xs text-gray-500 dark:text-gray-400">Percentage</label>
+                        <span className="text-xs font-semibold text-yellow-600 dark:text-yellow-400" 
+                              id="entertainment-percentage-display"
+                              aria-live="polite">
+                          {percentageStrings.entertainment}%
+                        </span>
+                      </div>
+                      <input
+                        id="entertainment-percentage-slider"
+                        type="range"
+                        min="0"
+                        max="100"
+                        step="0.1"
+                        value={parseFloat(percentageStrings.entertainment)}
+                        onChange={(e) => updateFieldPercentage('entertainment', e.target.value)}
+                        aria-describedby="entertainment-percentage-display entertainment-description"
+                        aria-label={`Entertainment percentage: ${percentageStrings.entertainment}%`}
+                        className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer dark:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-yellow-500 slider-yellow"
+                      />
+                    </div>
+                    <div className="flex items-center space-x-2">
+                      <label htmlFor="entertainment-amount-input" className="text-xs text-gray-500 dark:text-gray-400 w-8">R$</label>
+                      <input
+                        id="entertainment-amount-input"
+                        type="text"
+                        value={formatValueForInput(editableValues.entertainment || 0)}
+                        onChange={(e) => updateFieldValue('entertainment', parseValueInput(e.target.value))}
+                        aria-describedby="entertainment-description"
+                        aria-label="Entertainment valor em reais"
+                        className="flex-1 px-2 py-1 text-sm border rounded focus:ring-1 focus:ring-yellow-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+                      />
+                    </div>
+                    <p id="entertainment-description" 
+                       className="text-xl font-bold text-yellow-600 dark:text-yellow-400"
+                       aria-live="polite"
+                       role="status">
+                      Total: {formatCurrency(result.entertainment)}
+                    </p>
+                  </section>
+                </article>
+
+                {/* Studies Category */}
+                <article className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 border-l-4 border-indigo-500 transition-colors duration-300"
+                         aria-labelledby="studies-title"
+                         aria-describedby="studies-description">
+                  <h4 id="studies-title" className="text-lg font-semibold text-gray-800 dark:text-white mb-3">
+                    {locale === 'pt' ? 'Estudos' : 'Studies'}
+                  </h4>
+                  
+                  <section className="space-y-3" role="group" aria-labelledby="studies-controls-label">
+                    <h5 id="studies-controls-label" className="sr-only">Controles de Estudos</h5>
+                    <div className="space-y-2">
+                      <div className="flex items-center justify-between">
+                        <label htmlFor="studies-percentage-slider" className="text-xs text-gray-500 dark:text-gray-400">Percentage</label>
+                        <span className="text-xs font-semibold text-indigo-600 dark:text-indigo-400" 
+                              id="studies-percentage-display"
+                              aria-live="polite">
+                          {percentageStrings.studies}%
+                        </span>
+                      </div>
+                      <input
+                        id="studies-percentage-slider"
+                        type="range"
+                        min="0"
+                        max="100"
+                        step="0.1"
+                        value={parseFloat(percentageStrings.studies)}
+                        onChange={(e) => updateFieldPercentage('studies', e.target.value)}
+                        aria-describedby="studies-percentage-display studies-description"
+                        aria-label={`Studies percentage: ${percentageStrings.studies}%`}
+                        className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer dark:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 slider-indigo"
+                      />
+                    </div>
+                    <div className="flex items-center space-x-2">
+                      <label htmlFor="studies-amount-input" className="text-xs text-gray-500 dark:text-gray-400 w-8">R$</label>
+                      <input
+                        id="studies-amount-input"
+                        type="text"
+                        value={formatValueForInput(editableValues.studies || 0)}
+                        onChange={(e) => updateFieldValue('studies', parseValueInput(e.target.value))}
+                        aria-describedby="studies-description"
+                        aria-label="Studies valor em reais"
+                        className="flex-1 px-2 py-1 text-sm border rounded focus:ring-1 focus:ring-indigo-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+                      />
+                    </div>
+                    <p id="studies-description" 
+                       className="text-xl font-bold text-indigo-600 dark:text-indigo-400"
+                       aria-live="polite"
+                       role="status">
+                      Total: {formatCurrency(result.studies)}
                     </p>
                   </section>
                 </article>
@@ -386,6 +724,7 @@ export default function SalaryCalculator() {
         <Script
           id="structured-data"
           type="application/ld+json"
+          strategy="beforeInteractive"
           dangerouslySetInnerHTML={{
             __html: JSON.stringify(generateStructuredData()),
           }}

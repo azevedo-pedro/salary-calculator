@@ -1,0 +1,29 @@
+# Robots.txt for Salary Calculator
+User-agent: *
+Allow: /
+
+# Sitemap location
+Sitemap: https://calculator.azevedodev.com/sitemap.xml
+
+# Crawl delay for better server performance
+Crawl-delay: 1
+
+# Block crawling of unnecessary files
+Disallow: /_next/static/
+Disallow: /api/
+Disallow: *.js$
+Disallow: *.css$
+Disallow: /_next/
+Disallow: /node_modules/
+
+# Allow specific paths
+Allow: /pt
+Allow: /en
+Allow: /favicon.ico
+Allow: /manifest.json
+
+# Block common bot traps
+Disallow: /admin/
+Disallow: /private/
+Disallow: /test/
+Disallow: /debug/
