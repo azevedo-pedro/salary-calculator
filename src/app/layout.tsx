@@ -13,8 +13,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Calculadora Financeira de Salário",
-  description: "Calcule a distribuição do seu salário em diferentes categorias",
+  title: "Salary Calculator | Calculadora de Salário",
+  description: "Smart salary distribution calculator for better financial planning | Calculadora inteligente de distribuição salarial para melhor planejamento financeiro",
 };
 
 export default async function RootLayout({
@@ -23,9 +23,10 @@ export default async function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html>
+    <html suppressHydrationWarning>
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+        suppressHydrationWarning
       >
         {children}
       </body>
