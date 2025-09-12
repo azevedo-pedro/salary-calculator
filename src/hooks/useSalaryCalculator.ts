@@ -1,4 +1,5 @@
-import { useState, useMemo, useCallback } from 'react';
+import { useState, useCallback } from 'react';
+import { parseSalaryInput } from '@/lib/formValidation';
 
 export interface CalculationResult {
   investments: number;
@@ -29,14 +30,10 @@ const DEFAULT_DISTRIBUTION: SalaryDistributionConfig = {
   studies: 0.05,
 };
 
-const MINIMUM_SALARY = 1518; // Brazilian minimum wage
-
 export const useSalaryCalculator = () => {
-  const [salary, setSalary] = useState<string>('');
   const [result, setResult] = useState<CalculationResult | null>(null);
   const [distribution, setDistribution] = useState<SalaryDistributionConfig>(DEFAULT_DISTRIBUTION);
   const [editableValues, setEditableValues] = useState<Partial<CalculationResult>>({});
-  const [salaryError, setSalaryError] = useState<string>('');
   const [percentageStrings, setPercentageStrings] = useState<Record<keyof SalaryDistributionConfig, string>>({
     investments: '25',
     fixedCosts: '30',
@@ -45,37 +42,6 @@ export const useSalaryCalculator = () => {
     entertainment: '10',
     studies: '5'
   });
-
-
-  const parseSalaryInput = useCallback((salaryInput: string): number => {
-    if (!salaryInput || salaryInput.trim() === '') {
-      return 0;
-    }
-    
-    // Handle Brazilian number format (7.855,77) and international format (7,855.77)
-    let cleanInput = salaryInput.trim();
-    
-    // Remove any currency symbols
-    cleanInput = cleanInput.replace(/[R$\s]/g, '');
-    
-    // Check if it's Brazilian format (dots for thousands, comma for decimal)
-    if (cleanInput.includes(',') && cleanInput.lastIndexOf(',') > cleanInput.lastIndexOf('.')) {
-      // Brazilian format: 7.855,77
-      cleanInput = cleanInput.replace(/\./g, '').replace(',', '.');
-    } else if (cleanInput.includes('.') && cleanInput.includes(',') && cleanInput.lastIndexOf('.') > cleanInput.lastIndexOf(',')) {
-      // International format: 7,855.77
-      cleanInput = cleanInput.replace(/,/g, '');
-    } else if (cleanInput.includes(',') && !cleanInput.includes('.')) {
-      // Only comma, assume it's decimal separator: 7855,77
-      cleanInput = cleanInput.replace(',', '.');
-    }
-    // If only dots or no separators, assume it's already in correct format
-    
-    const parsed = parseFloat(cleanInput);
-    const result = isNaN(parsed) ? 0 : parsed;
-    
-    return result;
-  }, []);
 
   const calculateSalaryDistribution = useCallback((
     numericSalary: number,
@@ -102,23 +68,11 @@ export const useSalaryCalculator = () => {
     };
   }, []);
 
-  const calculate = useCallback(() => {
+  const calculate = useCallback((salary: string) => {
     performance.mark('calculation-start');
     const numericSalary = parseSalaryInput(salary);
     
-    // Clear previous error
-    setSalaryError('');
-    
     if (!numericSalary || numericSalary <= 0 || isNaN(numericSalary)) {
-      setResult(null);
-      setEditableValues({});
-      performance.mark('calculation-end');
-      return;
-    }
-
-    // Check minimum salary validation
-    if (numericSalary < MINIMUM_SALARY) {
-      setSalaryError(`O salário deve ser pelo menos R$ ${MINIMUM_SALARY.toLocaleString('pt-BR')},00 (salário mínimo brasileiro)`);
       setResult(null);
       setEditableValues({});
       performance.mark('calculation-end');
@@ -139,9 +93,9 @@ export const useSalaryCalculator = () => {
     
     performance.mark('calculation-end');
     performance.measure('salary-calculation', 'calculation-start', 'calculation-end');
-  }, [salary, distribution, percentageStrings, parseSalaryInput, calculateSalaryDistribution]);
+  }, [distribution, percentageStrings, calculateSalaryDistribution]);
 
-  const updateFieldValue = useCallback((field: keyof CalculationResult, value: number) => {
+  const updateFieldValue = useCallback((field: keyof CalculationResult, value: number, salary: string) => {
     performance.mark('field-update-start');
     const numericSalary = parseSalaryInput(salary);
     if (!numericSalary || numericSalary <= 0) return;
@@ -196,9 +150,9 @@ export const useSalaryCalculator = () => {
     
     performance.mark('field-update-end');
     performance.measure('field-update', 'field-update-start', 'field-update-end');
-  }, [salary, editableValues, distribution, percentageStrings, parseSalaryInput]);
+  }, [editableValues, distribution, percentageStrings]);
 
-  const updateFieldPercentage = useCallback((field: keyof SalaryDistributionConfig, percentageString: string) => {
+  const updateFieldPercentage = useCallback((field: keyof SalaryDistributionConfig, percentageString: string, salary: string) => {
     performance.mark('percentage-update-start');
     const percentage = parseFloat(percentageString) || 0;
     const newPercentageStrings = { ...percentageStrings, [field]: percentageString };
@@ -238,7 +192,7 @@ export const useSalaryCalculator = () => {
     
     performance.mark('percentage-update-end');
     performance.measure('percentage-update', 'percentage-update-start', 'percentage-update-end');
-  }, [percentageStrings, distribution, salary, parseSalaryInput, calculateSalaryDistribution]);
+  }, [percentageStrings, distribution, calculateSalaryDistribution]);
 
   const formatCurrency = useCallback((amount: number): string => {
     if (isNaN(amount) || !isFinite(amount)) {
@@ -250,41 +204,15 @@ export const useSalaryCalculator = () => {
     }).format(amount);
   }, []);
 
-  const isValidSalary = useCallback((): boolean => {
-    const numericSalary = parseSalaryInput(salary);
-    return numericSalary >= MINIMUM_SALARY && !isNaN(numericSalary);
-  }, [salary, parseSalaryInput]);
-
-  // Memoized numeric salary to avoid reparsing
-  const numericSalary = useMemo(() => {
-    return parseSalaryInput(salary);
-  }, [salary, parseSalaryInput]);
-
-  // Memoized calculation result
-  const memoizedResult = useMemo(() => {
-    if (!numericSalary || numericSalary <= 0 || numericSalary < MINIMUM_SALARY) {
-      return null;
-    }
-    return calculateSalaryDistribution(numericSalary, distribution);
-  }, [numericSalary, distribution, calculateSalaryDistribution]);
-
   return {
-    salary,
-    setSalary,
     result,
     calculate,
     formatCurrency,
-    isValidSalary,
     defaultDistribution: DEFAULT_DISTRIBUTION,
     distribution,
     editableValues,
     updateFieldValue,
     updateFieldPercentage,
-    percentageStrings,
-    salaryError,
-    minimumSalary: MINIMUM_SALARY,
-    // Expose memoized values for performance monitoring
-    numericSalary,
-    memoizedResult
+    percentageStrings
   };
 };
